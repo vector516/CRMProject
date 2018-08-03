@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script type="text/javascript" src="/js/jquery.min.js"></script><!--jquery-->
+<script type="text/javascript" src="/js/jquery.easyui.min.js"></script><!--easyui核心包-->
+<script type="text/javascript" src="/locale/easyui-lang-zh_CN.js"></script><!--国际化-->
+<link rel="stylesheet" type="text/css" href="/themes/icon.css"><!--主题css包-->
+<link rel="stylesheet" type="text/css" href="/themes/default/easyui.css"><!--默认css包-->
+<body>
+
+<script>
+    $(function () {
+        $(".menuA").click(function () {
+            //获取标签中的文本作为标题
+            var html= this.innerHTML;
+            //获取href的属性值
+            var url=this.href;
+            createTabs (html,url);
+            return false;
+        })
+
+    })
+
+    function createTabs(html,url) {
+        var flag= $("#mytabs").tabs("exists",html);
+        if(flag){
+            //存在就选中选项卡
+            $("#mytabs").tabs("select",html);
+
+        }else {
+            $("#mytabs").tabs('add',{
+                title:html,
+                content:createUrl(url),
+                closable:true,
+                tools:[{
+                    iconCls:'icon-mini-refresh',
+                    handler:function(){
+                        alert('refresh');
+                    }
+                }]
+            });
+        }
+    }
+
+    function createUrl(url) {
+        return "<iframe src='"+url+"' style='width: 100%' height='100%'></iframe>"
+    }
+
+</script>
+<style>
+    .menuA{
+        text-decoration: none;
+
+    }
+
+</style>
+
+<body>
+<div id="cc" class="easyui-layout" style="width:600px;height:400px;" data-options="fit:true" >
+    <div data-options="region:'north',title:'百度云官网',split:true,iconCls:'icon-ok'" style="height:100px;"></div>
+    <div data-options="region:'south',title:'版权指定',split:true,iconCls:'icon-add '" style="height:100px;"></div>
+    <div data-options="region:'west',title:'下载内容',split:true,iconCls:'icon-reload'" style="width:300px;">
+        <div id="aa" class="easyui-accordion" style="width:300px;height:200px;" data-options="fit:true">
+            <div title="美女图片" data-options="iconCls:'icon-save',selected:true" style="overflow:auto;padding:10px;">
+                <h3 style="color:#0099FF;">哈哈哈</h3>
+                <a href="https://image.baidu.com/search/index?tn=baiduimage&ct=201326592&lm=-1&cl=2&ie=gb18030&word=%D7%C0%C3%E6&fr=ala&ala=1&alatpl=adress&pos=0&hs=2&xthttps=111111" class="menuA">美女图片你要看吗</a>
+
+            </div>
+            <div title="美食美景" data-options="iconCls:'icon-reload'" style="padding:10px;">
+                <a href="customerData.html"   class="menuA" >美食美景你想要吗(客户)</a>
+            </div>
+            <div title="豪车豪宅" data-options="iconCls:'icon-ok'" style="padding:10px;">
+                <a href="beautifulhouse.html"  class="menuA">豪车豪宅你想要吗</a>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',iconCls:'icon-search'" style="padding:5px;background:#eee;">
+        <div id="mytabs" class="easyui-tabs" style="width:500px;height:250px;" data-options="fit:true">
+            <div title="论坛" data-options="iconCls:'icon-ok'" style="padding:20px;display:none;">
+                论坛
+            </div>
+            <div title="社区" data-options="closable:true,iconCls:'icon-redo'" style="overflow:auto;padding:20px;display:none;">
+                社区
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress ALL -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--spring整合hibernate,关键在于创建sessionFactory-->
+    <!--<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">-->
+    <!--<property name="configLocations" value="classpath:hibernate.cfg.xml"></property>-->
+    <!--</bean>-->
+
+    <!--创建hibernateTemplate-->
+    <!--<bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>-->
+
+    <!--开启注解扫描-->
+    <context:component-scan base-package="com.itheima.crm"></context:component-scan>
+
+    <!--配置hibernate的核心事务管理器-->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+    <!--开启事务的注解支持-->
+    <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+
+
+    <!--引入外部的属性文件-->
+    <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
+    <!--配置c3p0连接池信息-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driverClass}"></property>
+        <property name="jdbcUrl" value="${jdbc.url}"></property>
+        <property name="user" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+        <property name="minPoolSize" value="5"></property>
+        <property name="maxPoolSize" value="20"></property>
+        <property name="checkoutTimeout" value="120"></property>
+        <property name="idleConnectionTestPeriod" value="3000"></property>
+    </bean>
+
+
+    <!--配置action-->
+    <bean class="com.itheima.crm.web.action.UserAction" id="userAction" scope="prototype">
+        <property name="userService" ref="userService"></property>
+    </bean>
+    <bean class="com.itheima.crm.service.impl.UserServiceImpl" id="userService">
+        <property name="userDao" ref="userDao"></property>
+    </bean>
+    <bean class="com.itheima.crm.dao.impl.UserDaoImpl" id="userDao">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+
+    <!--客户的操作-->
+    <bean class="com.itheima.crm.web.action.CustomerAction" id="customerAction" scope="prototype">
+        <!--<property name="customerService" ref="customerService"></property>-->
+    </bean>
+    <bean class="com.itheima.crm.service.impl.CustomerServiceImpl" id="customerService">
+        <property name="customerDao" ref="customerDao"></property>
+    </bean>
+    <bean class="com.itheima.crm.dao.impl.CustomerDaoImpl" id="customerDao">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+
+    <!--联系人的操作-->
+    <bean class="com.itheima.crm.web.action.LinkManAction" id="linkManAction" scope="prototype">
+        <property name="linkManService" ref="linkManService"></property>
+        <property name="customerService" ref="customerService"></property>
+    </bean>
+    <bean class="com.itheima.crm.service.impl.LinkManServiceImpl" id="linkManService">
+        <property name="linkManDao" ref="linkManDao"></property>
+    </bean>
+    <bean class="com.itheima.crm.dao.impl.LinkManDaoImpl" id="linkManDao">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+
+
+
+
+    <!--配置AJAX的数据回显-->
+    <bean class="com.itheima.crm.web.action.BaseDictAction" id="baseDictAction" scope="prototype">
+        <property name="baseDictService" ref="baseDictService"></property>
+    </bean>
+    <bean class="com.itheima.crm.service.impl.BaseDictServiceImpl" id="baseDictService">
+        <property name="baseDictDao" ref="baseDictDao"></property>
+    </bean>
+    <bean class="com.itheima.crm.dao.impl.BaseDictDaoImpl" id="baseDictDao">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+    <!--客户拜访的操作-->
+    <bean class="com.itheima.crm.web.action.ClientVisitAction" id="clientVisitAction" scope="prototype"></bean>
+    <bean class="com.itheima.crm.service.impl.ClientVisitServiceImpl" id="clientVisitService"></bean>
+    <bean class="com.itheima.crm.dao.impl.ClientVisitDaoImpl" id="clientVisitDao">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+    <!--配置hibernate的属性和映射-->
+    <bean class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" id="sessionFactory">
+        <property name="dataSource" ref="dataSource"></property>
+        <!--配置属性,以properties集合属性注入-->
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="show_sql">true</prop>
+                <prop key="format_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+
+        <!--加载映射文件-->
+        <property name="mappingDirectoryLocations">
+            <list>
+                <value>classpath:com/itheima/crm/domain</value>
+                <!--<value>com/itheima/crm/domain/User.hbm.xml</value>-->
+                <!--<value>com/itheima/crm/domain/Customer.hbm.xml</value>-->
+                <!--<value>com/itheima/crm/domain/BaseDict.hbm.xml</value>-->
+                <!--<value>com/itheima/crm/domain/LinkMan.hbm.xml</value>-->
+            </list>
+        </property>
+    </bean>
+</beans>
+    
+    
+    
+    

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script type="text/javascript" src="/js/jquery.min.js"></script><!--jquery-->
+<script type="text/javascript" src="/js/jquery.easyui.min.js"></script><!--easyui核心包-->
+<script type="text/javascript" src="/locale/easyui-lang-zh_CN.js"></script><!--国际化-->
+<link rel="stylesheet" type="text/css" href="/themes/icon.css"><!--主题css包-->
+<link rel="stylesheet" type="text/css" href="/themes/default/easyui.css"><!--默认css包-->
+
+<script>
+    $(function () {
+        $('#dg').datagrid({
+            url: 'customer_findByPage.action',
+            columns: [[
+                {field: 'cust_id', title: '客户id', width: 100},
+                {field: 'cust_name', title: '客户名称', width: 100},
+
+
+                {field: 'fff', title: '信息来源', width: 100,formatter:function (value, row, index) {
+                       return row.baseDictSource.dict_item_name;
+                    }},
+                {field: 'ggg', title: '客户等级', width: 100,formatter:function (value, row, index) {
+                        return row.baseDictLevel.dict_item_name;
+                    }},
+                {field: 'hhh', title: '客户行业', width: 100,formatter:function (value, row, index) {
+                        return row.baseDictIndustry.dict_item_name;
+                    }},
+
+
+                {field: 'cust_phone', title: '客户电话', width: 100, align: 'right'},
+                {
+                    field: 'ccc', title: '操作', formatter: function (value, row, index) {
+                        // alert(value+"     "+row.productid+"     "+row.productname+"       "+index)
+                        return "<a href='#'>修改</a> | <a href='#' onclick='del(" + row.cust_id + ")'>删除</a>"
+
+                    }
+                }
+            ]],
+            singleSelect: true,
+            fitColumns: true,
+            striped:true,
+            pagination:true,
+            pageList:[3,5,10],
+            pageSize:3,
+            pageNumber:1,
+            fit:true,
+            toolbar: [{
+                text: "新增",
+                iconCls: 'icon-add',
+                handler: function () {
+                    alert('新增按钮')
+                $("#win").window("open")
+                }
+            }, '-', {
+                text: "帮助",
+                iconCls: 'icon-help',
+                handler: function () {
+                    alert('帮助按钮')
+                }
+            }]
+        });
+
+        $("#btn4").click(function () {
+            $("#form1").submit();
+        })
+
+    })
+
+    function del(id) {
+        alert(id)
+        return false;
+    }
+
+
+
+
+</script>
+<body>
+<table id="dg" class="easyui-datagrid" >
+</table>
+
+<div id="win" class="easyui-window" title="My Window" style="width:600px;height:400px"
+     data-options="iconCls:'icon-save',modal:true,closed:true,collapsible:false">
+
+    <FORM id=form1 name=form1
+          action="../customer_save.action"
+          method="post">
+
+        <TABLE cellSpacing=0 cellPadding=0 width="98%" border=0>
+            <TBODY>
+            <TR>
+                <TD vAlign=top width="100%" bgColor=#ffffff>
+                    <TABLE cellSpacing=0 cellPadding=5 width="100%" border=0>
+                        <TR>
+                            <TD class=manageHead>当前位置：客户管理 &gt; 添加客户</TD>
+                        </TR>
+                        <TR>
+                            <TD height=2></TD>
+                        </TR>
+                    </TABLE>
+
+                    <TABLE cellSpacing=0 cellPadding=5  border=0>
+                        <TR>
+                            <td>客户名称：</td>
+                            <td>
+                                <INPUT class=textbox id=sChannel2
+                                       style="WIDTH: 180px" maxLength=50 name="cust_name">
+                            </td>
+                            <td>客户级别 ：</td>
+                            <td>
+                                <INPUT class=textbox id=sChannel2
+                                       style="WIDTH: 180px" maxLength=50 name="cust_level">
+
+                            </td>
+                        </TR>
+
+                        <TR>
+
+                            <td>信息来源 ：</td>
+                            <td>
+                                <INPUT class=textbox id=sChannel2
+                                       style="WIDTH: 180px" maxLength=50 name="cust_source">
+                            </td>
+                            <td>所属行业 ：</td>
+                            <td>
+                                <INPUT class=textbox id=sChannel2
+                                       style="WIDTH: 180px" maxLength=50 name="cust_industry">
+                            </td>
+                        </TR>
+
+                        <TR>
+                            <td>固定电话 ：</td>
+                            <td>
+                                <INPUT class=textbox id=sChannel2
+                                       style="WIDTH: 180px" maxLength=50 name="cust_phone">
+                            </td>
+                            <td>移动电话 ：</td>
+                            <td>
+                                <INPUT class=textbox id=sChannel2
+                                       style="WIDTH: 180px" maxLength=50 name="cust_mobile">
+                            </td>
+                        </TR>
+
+
+                        <tr>
+                            <td rowspan=2>
+                                <a href="#" id="btn4" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+                            </td>
+                        </tr>
+                    </TABLE>
+
+
+                </TD>
+            </TR>
+            </TBODY>
+        </TABLE>
+    </FORM>
+
+
+
+</div>
+
+
+</body>
+</html>

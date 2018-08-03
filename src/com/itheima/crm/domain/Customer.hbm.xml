@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.itheima.crm.domain.Customer" table="customer" catalog="day627crm">
+        <id name="cust_id">
+            <generator class="native"></generator>
+        </id>
+        <property name="cust_name"></property>
+        <property name="cust_phone"></property>
+        <property name="cust_mobile"></property>
+        <property name="cust_image"></property>
+
+     <!--一个客户对应着不同的行业,来源,级别,分别对应3个外键-->
+    <many-to-one name="baseDictSource" class="com.itheima.crm.domain.BaseDict" column="cust_source"></many-to-one>
+    <many-to-one name="baseDictIndustry" class="com.itheima.crm.domain.BaseDict" column="cust_industry"></many-to-one>
+    <many-to-one name="baseDictLevel" class="com.itheima.crm.domain.BaseDict" column="cust_level"></many-to-one>
+   
+   <set name="linkMans" inverse="true" cascade="delete">
+       <key column="lkm_cust_id"></key>
+       <one-to-many class="com.itheima.crm.domain.LinkMan"></one-to-many>
+   </set>
+   
+    </class>
+</hibernate-mapping>
+

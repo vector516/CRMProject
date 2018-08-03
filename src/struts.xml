@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+    <constant name="struts.ui.theme" value="simple"></constant>
+    <constant name="struts.devMode" value="true"></constant>
+    <constant name="struts.action.extension" value="action"></constant>
+
+    <!--配置上传文件的最大(多个文件)总大小-->
+    <constant name="struts.multipart.maxSize" value="15728640"></constant>
+
+    <package name="demo02" extends="json-default" namespace="/">
+
+        <!--自定义拦截器-->
+        <interceptors>
+        <interceptor name="privilegeInterceptor" class="com.itheima.crm.interceptor.PrivilegeInterceptor">
+            <param name="excludeMethods">login,regist</param>
+        </interceptor>
+        <interceptor-stack name="MyStack">
+            <interceptor-ref name="privilegeInterceptor"></interceptor-ref>
+            <interceptor-ref name="defaultStack"></interceptor-ref>
+        </interceptor-stack>
+        </interceptors>
+
+
+        <global-results>
+            <result name="loginError">/login.jsp</result>
+            <result name="input">/error.jsp</result>
+
+
+            <result name="jsonSuccess" type="json">
+                <param name="excludeProperties">linkMans,baseDictSource,baseDictLevel,baseDictIndustry</param>
+            </result>
+        </global-results>
+
+
+        <action name="user_*" class="userAction" method="{1}">
+            <interceptor-ref name="MyStack"></interceptor-ref>
+
+            <result name="success">/login.jsp</result>
+            <result name="regist">/regist.jsp</result>
+            <result name="login">/index.jsp</result>
+            <result name="failed">/login.jsp</result>
+            <result name="jsonSuccess" type="json"></result>
+        </action>
+
+
+        <action name="customer_*" class="customerAction" method="{1}">
+            <interceptor-ref name="MyStack"></interceptor-ref>
+            <result name="success">/jsp/customer/add.jsp</result>
+            <result name="saveSuccess" type="redirect">demo/customerData.html</result>
+            <result name="page">/jsp/customer/list.jsp</result>
+            <result name="pageSuccess" type="json"></result>
+            <result name="deleteSuccess" type="redirectAction">customer_findByPage.action</result>
+            <result name="echoSuccess">/jsp/customer/edit.jsp</result>
+            <result name="updateSuccess" type="redirectAction">customer_findByPage.action</result>
+
+            <!--使用默认的拦截器设置fileUpload这个拦截器的初始化参数-->
+            <interceptor-ref name="defaultStack">
+                <!--设置上传的单个文件的大小不超过3M -->
+                <param name="fileUpload.maximumSize">3145728</param>
+                <!--设置上传的文件的类型,即后缀名为jpg -->
+                <!--<param name="fileUpload.allowedExtensions">.jpg</param>-->
+            </interceptor-ref>
+        </action>
+
+        <action name="download_*" class="com.itheima.crm.web.action.DownloadAction" method="{1}">
+            <interceptor-ref name="MyStack"></interceptor-ref>
+            <result name="download" type="stream">
+                <param name="contentType">${#request.contentType}</param>
+                <param name="inputName">inputStream</param>
+                <param name="contentDisposition">attachment;filename="${#request.filename}"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+
+        </action>
+
+        <action name="baseDict_*" class="baseDictAction" method="{1}">
+            <interceptor-ref name="MyStack"></interceptor-ref>
+        </action>
+
+        <action name="linkMan_*" class="linkManAction" method="{1}">
+            <interceptor-ref name="MyStack"></interceptor-ref>
+
+            <result name="success">/jsp/linkman/add.jsp</result>
+            <result name="saveSuccess" type="redirectAction">linkMan_findByPage.action</result>
+            <result name="page">/jsp/linkman/list.jsp</result>
+            <result name="edit">/jsp/linkman/edit.jsp</result>
+            <result name="deleteSuccess" type="redirectAction">linkMan_findByPage.action</result>
+            <result name="updateSuccess" type="redirectAction">linkMan_findByPage.action</result>
+        </action>
+
+        <action name="clientVisit_*" class="clientVisitAction" method="{1}">
+            <interceptor-ref name="MyStack"></interceptor-ref>
+
+            <result name="addVist">/jsp/salevisit/add.jsp</result>
+            <result name="saveSuccess" type="redirectAction">clientVisit_findByPage.action</result>
+            <result name="page">/jsp/salevisit/list.jsp</result>
+            <result name="deleteSuccess" type="redirectAction">clientVisit_findByPage.action</result>
+        </action>
+
+    </package>
+
+
+</struts>
